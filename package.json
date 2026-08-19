@@ -9,7 +9,7 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
     "dev": "tsx src/index.ts",
-    "test": "tsx --test test/**/*.test.ts",
+    "test": "npm run build && tsx --test test/**/*.test.ts",
     "inspect": "npx @modelcontextprotocol/inspector node dist/index.js",
     "package": "node scripts/build-mcpb.mjs"
   },
