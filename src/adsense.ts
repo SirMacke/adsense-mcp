@@ -32,7 +32,7 @@ export class AdSenseClient {
   }
 
   async getAccount(account: string) {
-    return this.request(`/${encodeURIComponent(account)}`);
+    return this.request(`/${account}`);
   }
 
   async generateReport(input: Record<string, unknown>) {
@@ -46,7 +46,7 @@ export class AdSenseClient {
       }
     }
     const query = params.toString();
-    return this.request(`/${encodeURIComponent(account)}/reports:generate${query ? `?${query}` : ""}`);
+    return this.request(`/${account}/reports:generate${query ? `?${query}` : ""}`);
   }
 
   private async defaultAccount(): Promise<string> {
