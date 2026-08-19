@@ -14,6 +14,18 @@ npm install
 npm run build
 ```
 
+### One-time OAuth authorization (without gcloud)
+
+Download the OAuth **Desktop** client JSON from Google Cloud, then run:
+
+```powershell
+$env:ADSENSE_OAUTH_CLIENT_FILE = "C:\secure\adsense-client.json"
+$env:ADSENSE_TOKEN_FILE = "C:\secure\adsense-oauth.json"
+npm run authorize
+```
+
+The command opens the Google consent screen on a localhost callback and saves the client ID, client secret, and refresh token only in the private token file. Copy those values to the `ADSENSE_CLIENT_ID`, `ADSENSE_CLIENT_SECRET`, and `ADSENSE_REFRESH_TOKEN` fields of the MCP configuration. Do not leave an External consent screen in Testing: its refresh tokens expire after seven days.
+
 ## Claude Desktop
 
 Current Claude Desktop builds use extensions. Run `npm run package`, then install `build/adsense-mcp.mcpb` from Settings → Extensions → Advanced settings → Install extension. It securely prompts for the OAuth values. On installations that support classic configuration, add this instead:
