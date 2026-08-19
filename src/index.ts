@@ -5,7 +5,7 @@ import { z } from "zod";
 import { AdSenseClient, configFromEnv } from "./adsense.js";
 
 const client = new AdSenseClient(configFromEnv());
-const server = new McpServer({ name: "adsense-mcp", version: "0.1.0" });
+const server = new McpServer({ name: "adsense-mcp", version: "0.1.1" });
 
 function response(data: unknown) {
   return { content: [{ type: "text" as const, text: JSON.stringify(data, null, 2) }] };

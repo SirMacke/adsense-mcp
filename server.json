@@ -1,18 +1,18 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.sirmacke/adsense-mcp",
+  "name": "io.github.SirMacke/adsense-mcp",
   "title": "Google AdSense",
   "description": "Read AdSense Management API v2 accounts and reports through MCP.",
   "repository": {
     "url": "https://github.com/SirMacke/adsense-mcp",
     "source": "github"
   },
-  "version": "0.1.0",
+  "version": "0.1.1",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@sirmacke/adsense-mcp",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "transport": { "type": "stdio" },
       "environmentVariables": [
         { "name": "ADSENSE_ACCESS_TOKEN", "description": "Optional short-lived OAuth access token.", "isRequired": false, "isSecret": true, "format": "string" },

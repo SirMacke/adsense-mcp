@@ -2,7 +2,7 @@
   "manifest_version": "0.3",
   "name": "adsense-mcp",
   "display_name": "Google AdSense",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Extract any AdSense Management API v2 report through MCP.",
   "author": { "name": "SirMacke" },
   "server": {

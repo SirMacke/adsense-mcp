@@ -1,9 +1,9 @@
 {
   "name": "@sirmacke/adsense-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "description": "MCP server for extracting AdSense Management API v2 report data",
-  "mcpName": "io.github.sirmacke/adsense-mcp",
+  "mcpName": "io.github.SirMacke/adsense-mcp",
   "type": "module",
   "main": "dist/index.js",
   "bin": { "adsense-mcp": "dist/index.js" },
