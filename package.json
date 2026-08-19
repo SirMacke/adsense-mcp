@@ -1,10 +1,16 @@
 {
-  "name": "adsense-mcp",
+  "name": "@sirmacke/adsense-mcp",
   "version": "0.1.0",
-  "private": true,
+  "license": "MIT",
   "description": "MCP server for extracting AdSense Management API v2 report data",
+  "mcpName": "io.github.sirmacke/adsense-mcp",
   "type": "module",
+  "main": "dist/index.js",
   "bin": { "adsense-mcp": "dist/index.js" },
+  "files": ["dist", "README.md", "LICENSE"],
+  "repository": { "type": "git", "url": "git+https://github.com/SirMacke/adsense-mcp.git" },
+  "bugs": { "url": "https://github.com/SirMacke/adsense-mcp/issues" },
+  "homepage": "https://github.com/SirMacke/adsense-mcp#readme",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
@@ -12,7 +18,8 @@
     "test": "npm run build && tsx --test test/**/*.test.ts",
     "inspect": "npx @modelcontextprotocol/inspector node dist/index.js",
     "package": "node scripts/build-mcpb.mjs",
-    "authorize": "node scripts/authorize.mjs"
+    "authorize": "node scripts/authorize.mjs",
+    "prepack": "npm run build"
   },
   "engines": { "node": ">=20" },
   "dependencies": {

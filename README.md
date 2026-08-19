@@ -2,6 +2,16 @@
 
 An MCP server that extracts ad-hoc data from the [AdSense Management API v2](https://developers.google.com/adsense/management/reference/rest/v2/accounts.reports/generate). It exposes an unrestricted report interface: any supported AdSense dimensions, metrics, filters, time period, sort order, timezone, language, currency, and limit can be passed through to `accounts.reports.generate`.
 
+The server uses the read-only `https://www.googleapis.com/auth/adsense.readonly` OAuth scope. It does not write to an AdSense account.
+
+## Install
+
+Once published, run it from an MCP client with `npx -y @sirmacke/adsense-mcp`. Configure either `ADSENSE_ACCESS_TOKEN`, or all three of `ADSENSE_CLIENT_ID`, `ADSENSE_CLIENT_SECRET`, and `ADSENSE_REFRESH_TOKEN`.
+
+## Security
+
+OAuth access tokens, refresh tokens, and client secrets are credentials. Keep them out of this repository, issue trackers, shell history, and MCP configuration that is shared with others. If one is exposed, revoke it in Google Cloud immediately; see [SECURITY.md](SECURITY.md).
+
 ## Setup
 
 1. In Google Cloud, enable **AdSense Management API** and create an OAuth Desktop client.
@@ -66,3 +76,7 @@ npm run build
 ```
 
 Live verification also requires the OAuth values above and an AdSense account. The API’s report endpoint is `GET /v2/{account}/reports:generate`; it requires the AdSense or AdSense read-only OAuth scope.
+
+## License
+
+[MIT](LICENSE)

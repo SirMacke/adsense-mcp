@@ -1,0 +1,26 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.sirmacke/adsense-mcp",
+  "title": "Google AdSense",
+  "description": "Read AdSense Management API v2 accounts and reports through MCP.",
+  "repository": {
+    "url": "https://github.com/SirMacke/adsense-mcp",
+    "source": "github"
+  },
+  "version": "0.1.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@sirmacke/adsense-mcp",
+      "version": "0.1.0",
+      "transport": { "type": "stdio" },
+      "environmentVariables": [
+        { "name": "ADSENSE_ACCESS_TOKEN", "description": "Optional short-lived OAuth access token.", "isRequired": false, "isSecret": true, "format": "string" },
+        { "name": "ADSENSE_CLIENT_ID", "description": "OAuth desktop client ID. Required when not using an access token.", "isRequired": false, "isSecret": false, "format": "string" },
+        { "name": "ADSENSE_CLIENT_SECRET", "description": "OAuth desktop client secret. Required when not using an access token.", "isRequired": false, "isSecret": true, "format": "string" },
+        { "name": "ADSENSE_REFRESH_TOKEN", "description": "OAuth refresh token. Required when not using an access token.", "isRequired": false, "isSecret": true, "format": "string" },
+        { "name": "ADSENSE_ACCOUNT", "description": "Optional AdSense account resource name. The first accessible account is used when omitted.", "isRequired": false, "isSecret": false, "format": "string" }
+      ]
+    }
+  ]
+}

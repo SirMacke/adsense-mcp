@@ -4,7 +4,7 @@
   "display_name": "Google AdSense",
   "version": "0.1.0",
   "description": "Extract any AdSense Management API v2 report through MCP.",
-  "author": { "name": "Max" },
+  "author": { "name": "SirMacke" },
   "server": {
     "type": "binary",
     "entry_point": "server/index.js",
