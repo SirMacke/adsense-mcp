@@ -50,6 +50,6 @@ await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
 const { port } = server.address();
 const redirectUri = `http://127.0.0.1:${port}/oauth2callback`;
 const authorizationUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth");
-authorizationUrl.search = new URLSearchParams({ client_id: client.client_id, redirect_uri: redirectUri, response_type: "code", scope: "https://www.googleapis.com/auth/adsense.readonly", access_type: "offline", prompt: "consent", state, code_challenge: challenge, code_challenge_method: "S256" }).toString();
+authorizationUrl.search = new URLSearchParams({ client_id: client.client_id, redirect_uri: redirectUri, response_type: "code", scope: "https://www.googleapis.com/auth/adsense.readonly", access_type: "offline", prompt: "consent select_account", state, code_challenge: challenge, code_challenge_method: "S256" }).toString();
 console.log(`Open this URL in a browser and sign in with the AdSense account:\n${authorizationUrl}`);
-if (process.platform === "win32") spawn("cmd", ["/c", "start", "", authorizationUrl.toString()], { detached: true, stdio: "ignore", windowsHide: true }).unref();
+if (process.platform === "win32") spawn("cmd", ["/c", `start "" "${authorizationUrl}"`], { detached: true, stdio: "ignore", windowsHide: true }).unref();
