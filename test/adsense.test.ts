@@ -26,3 +26,30 @@ test("discovers an account and exchanges a refresh token when no access token ex
   assert.equal(urls.length, 3);
   assert.match(urls[2], /accounts\/pub-2\/reports:generate/);
 });
+
+test("refreshes an expired token instead of reusing a cached one forever", async () => {
+  let tokensIssued = 0;
+  const client = new AdSenseClient({ clientId: "id", clientSecret: "secret", refreshToken: "refresh", account: "accounts/pub-1" }, async (url) => {
+    if (String(url).includes("oauth2")) {
+      tokensIssued += 1;
+      return new Response(JSON.stringify({ access_token: `token-${tokensIssued}`, expires_in: 0 }), { status: 200 });
+    }
+    return new Response(JSON.stringify({ totalMatchedRows: "0" }), { status: 200 });
+  });
+  await client.generateReport({ metrics: ["CLICKS"] });
+  await client.generateReport({ metrics: ["CLICKS"] });
+  assert.equal(tokensIssued, 2, "second call should refresh rather than reuse the expired token");
+});
+
+test("retries once on a stray 401 from a token that expired mid-lifetime", async () => {
+  let calls = 0;
+  const client = new AdSenseClient({ clientId: "id", clientSecret: "secret", refreshToken: "refresh", account: "accounts/pub-1" }, async (url) => {
+    if (String(url).includes("oauth2")) return new Response(JSON.stringify({ access_token: "fresh", expires_in: 3600 }), { status: 200 });
+    calls += 1;
+    if (calls === 1) return new Response(JSON.stringify({ error: { status: "UNAUTHENTICATED" } }), { status: 401 });
+    return new Response(JSON.stringify({ totalMatchedRows: "0" }), { status: 200 });
+  });
+  const result = await client.generateReport({ metrics: ["CLICKS"] });
+  assert.equal(calls, 2);
+  assert.deepEqual(result, { totalMatchedRows: "0" });
+});

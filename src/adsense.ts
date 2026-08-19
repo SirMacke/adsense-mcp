@@ -23,8 +23,10 @@ export function configFromEnv(env = process.env): AdSenseConfig {
 
 export class AdSenseClient {
   private token?: string;
+  private tokenExpiresAt = 0;
   constructor(private readonly config: AdSenseConfig, private readonly fetchImpl: FetchLike = fetch) {
     this.token = config.accessToken;
+    if (this.token) this.tokenExpiresAt = Infinity; // caller-supplied token: no refresh_token to renew it with
   }
 
   async listAccounts() {
@@ -60,14 +62,27 @@ export class AdSenseClient {
   private async request(path: string) {
     const token = await this.getToken();
     const response = await this.fetchImpl(`${API_ROOT}${path}`, { headers: { Authorization: `Bearer ${token}` } });
+    if (response.status === 401 && this.canRefresh()) {
+      // access token expired mid-lifetime (or was revoked) — refresh once and retry
+      this.token = undefined;
+      const retryToken = await this.getToken();
+      const retry = await this.fetchImpl(`${API_ROOT}${path}`, { headers: { Authorization: `Bearer ${retryToken}` } });
+      if (!retry.ok) throw new Error(`AdSense API request failed (${retry.status}): ${await retry.text()}`);
+      return retry.json();
+    }
     if (!response.ok) throw new Error(`AdSense API request failed (${response.status}): ${await response.text()}`);
     return response.json();
   }
 
+  private canRefresh(): boolean {
+    return Boolean(this.config.clientId && this.config.clientSecret && this.config.refreshToken);
+  }
+
   private async getToken(): Promise<string> {
-    if (this.token) return this.token;
+    if (this.token && Date.now() < this.tokenExpiresAt) return this.token;
     const { clientId, clientSecret, refreshToken } = this.config;
     if (!clientId || !clientSecret || !refreshToken) {
+      if (this.token) return this.token; // expired caller-supplied token and nothing to refresh it with — let the API 401
       throw new Error("Configure ADSENSE_ACCESS_TOKEN or ADSENSE_CLIENT_ID, ADSENSE_CLIENT_SECRET, and ADSENSE_REFRESH_TOKEN.");
     }
     const response = await this.fetchImpl(TOKEN_URL, {
@@ -76,9 +91,11 @@ export class AdSenseClient {
       body: new URLSearchParams({ client_id: clientId, client_secret: clientSecret, refresh_token: refreshToken, grant_type: "refresh_token" }),
     });
     if (!response.ok) throw new Error(`OAuth token refresh failed (${response.status}): ${await response.text()}`);
-    const result = (await response.json()) as { access_token?: string };
+    const result = (await response.json()) as { access_token?: string; expires_in?: number };
     if (!result.access_token) throw new Error("OAuth token response did not contain access_token.");
     this.token = result.access_token;
+    // refresh 60s early so a near-expiry token never gets used for a real request
+    this.tokenExpiresAt = Date.now() + Math.max((result.expires_in ?? 3600) - 60, 0) * 1000;
     return this.token;
   }
 }
