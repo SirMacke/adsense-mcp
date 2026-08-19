@@ -9,7 +9,7 @@ test("generates a report using the configured account and repeated query paramet
     return new Response(JSON.stringify({ rows: [] }), { status: 200 });
   });
   await client.generateReport({ metrics: ["CLICKS", "PAGE_VIEWS"], dimensions: ["DATE"], dateRange: "LAST_7_DAYS" });
-  assert.match(requested, /accounts%2Fpub-1\/reports:generate/);
+  assert.match(requested, /accounts\/pub-1\/reports:generate/);
   assert.match(requested, /metrics=CLICKS&metrics=PAGE_VIEWS/);
   assert.match(requested, /dimensions=DATE/);
 });
@@ -24,5 +24,5 @@ test("discovers an account and exchanges a refresh token when no access token ex
   });
   await client.generateReport({ metrics: ["CLICKS"] });
   assert.equal(urls.length, 3);
-  assert.match(urls[2], /accounts%2Fpub-2\/reports:generate/);
+  assert.match(urls[2], /accounts\/pub-2\/reports:generate/);
 });
