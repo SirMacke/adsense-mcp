@@ -1,0 +1,38 @@
+{
+  "manifest_version": "0.3",
+  "name": "adsense-mcp",
+  "display_name": "Google AdSense",
+  "version": "0.1.0",
+  "description": "Extract any AdSense Management API v2 report through MCP.",
+  "author": { "name": "Max" },
+  "server": {
+    "type": "binary",
+    "entry_point": "server/index.js",
+    "mcp_config": {
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": ["${__dirname}/server/index.js"],
+      "env": {
+        "ADSENSE_ACCESS_TOKEN": "${user_config.access_token}",
+        "ADSENSE_CLIENT_ID": "${user_config.client_id}",
+        "ADSENSE_CLIENT_SECRET": "${user_config.client_secret}",
+        "ADSENSE_REFRESH_TOKEN": "${user_config.refresh_token}",
+        "ADSENSE_ACCOUNT": "${user_config.account}"
+      }
+    }
+  },
+  "user_config": {
+    "access_token": { "type": "string", "title": "OAuth access token", "description": "Optional short-lived access token. Prefer the refresh-token settings below for persistent access.", "sensitive": true, "required": false },
+    "client_id": { "type": "string", "title": "OAuth client ID", "description": "Google Cloud OAuth desktop application's client ID.", "required": false },
+    "client_secret": { "type": "string", "title": "OAuth client secret", "description": "Google Cloud OAuth desktop application's client secret.", "sensitive": true, "required": false },
+    "refresh_token": { "type": "string", "title": "OAuth refresh token", "description": "OAuth token granted the AdSense read-only scope.", "sensitive": true, "required": false },
+    "account": { "type": "string", "title": "AdSense account", "description": "Optional account resource name, e.g. accounts/pub-123. The first accessible account is used when blank.", "required": false }
+  },
+  "tools": [
+    { "name": "adsense_list_accounts", "description": "List accessible AdSense accounts." },
+    { "name": "adsense_get_account", "description": "Get an AdSense account." },
+    { "name": "adsense_generate_report", "description": "Extract an arbitrary AdSense Management API v2 report." }
+  ],
+  "keywords": ["adsense", "google", "analytics", "reporting"],
+  "license": "MIT",
+  "compatibility": { "platforms": ["win32", "darwin", "linux"], "runtimes": { "node": ">=20" } }
+}
