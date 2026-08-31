@@ -77,6 +77,18 @@ npm run build
 
 Live verification also requires the OAuth values above and an AdSense account. The API’s report endpoint is `GET /v2/{account}/reports:generate`; it requires the AdSense or AdSense read-only OAuth scope.
 
+## Releasing
+
+Releases are published to both npm and the official MCP Registry. The registry stores discovery metadata from `server.json`; the installable server itself is distributed through npm.
+
+1. Update the version consistently in `package.json`, `package-lock.json`, `server.json` (including its npm package entry), `mcpb/manifest.json`, and the MCP server version in `src/index.ts`.
+2. Run `npm test` and `npm pack --dry-run` to verify the build and published package contents.
+3. Commit and push the release to GitHub.
+4. Publish the public scoped package with `npm publish --access public`.
+5. Authenticate when necessary with `mcp-publisher login github`, then run `mcp-publisher publish` to publish the matching `server.json` version.
+
+Publish npm before the MCP Registry because registry validation requires the referenced public package version to exist. Published versions are immutable, so corrections require a new version.
+
 ## License
 
 [MIT](LICENSE)
