@@ -5,17 +5,24 @@ import { z } from "zod";
 import { AdSenseClient, configFromEnv } from "./adsense.js";
 
 const client = new AdSenseClient(configFromEnv());
-const server = new McpServer({ name: "adsense-mcp", version: "0.1.1" });
+const server = new McpServer({ name: "adsense-mcp", version: "0.1.3" });
+
+const readOnlyToolAnnotations = {
+  readOnlyHint: true,
+  destructiveHint: false,
+  idempotentHint: true,
+  openWorldHint: false,
+} as const;
 
 function response(data: unknown) {
   return { content: [{ type: "text" as const, text: JSON.stringify(data, null, 2) }] };
 }
 
-server.tool("adsense_list_accounts", "List AdSense accounts available to the authenticated user.", {}, async () => response(await client.listAccounts()));
+server.tool("adsense_list_accounts", "List AdSense accounts available to the authenticated user.", {}, readOnlyToolAnnotations, async () => response(await client.listAccounts()));
 
 server.tool("adsense_get_account", "Get one AdSense account by resource name, e.g. accounts/pub-123.", {
   account: z.string().regex(/^accounts\//),
-}, async ({ account }) => response(await client.getAccount(account)));
+}, readOnlyToolAnnotations, async ({ account }) => response(await client.getAccount(account)));
 
 server.tool("adsense_generate_report", "Extract any ad-hoc AdSense report. Supply API v2 dimensions, metrics, filters, dates, sorting, and other report parameters. Account is discovered automatically when omitted.", {
   account: z.string().regex(/^accounts\//).optional().describe("Account resource name; optional when one account is accessible."),
@@ -30,6 +37,6 @@ server.tool("adsense_generate_report", "Extract any ad-hoc AdSense report. Suppl
   currencyCode: z.string().length(3).optional(),
   limit: z.number().int().min(1).max(100000).optional(),
   reportingTimeZone: z.string().optional().describe("ACCOUNT_TIME_ZONE or GOOGLE_TIME_ZONE."),
-}, async (args) => response(await client.generateReport(args)));
+}, readOnlyToolAnnotations, async (args) => response(await client.generateReport(args)));
 
 await server.connect(new StdioServerTransport());
