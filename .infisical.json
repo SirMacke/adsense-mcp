@@ -1,6 +1,6 @@
-﻿{
-    "workspaceId":  "07e658d3-46e8-483e-aff3-35ad58b857e8",
-    "defaultEnvironment":  "dev",
-    "gitBranchToEnvironmentMapping":  null,
-    "domain":  "https://keys.helmersson.se:4443"
+{
+  "workspaceId": "07e658d3-46e8-483e-aff3-35ad58b857e8",
+  "defaultEnvironment": "dev",
+  "gitBranchToEnvironmentMapping": null,
+  "domain": "https://keys.helmersson.se:4443"
 }
