@@ -21,6 +21,40 @@ export function configFromEnv(env = process.env): AdSenseConfig {
   };
 }
 
+// The AdSense Management API v2 represents startDate/endDate as a nested Date
+// message ({ year, month, day }), not a primitive. Its GET reports:generate
+// endpoint uses Google's standard HTTP/JSON transcoding for nested fields:
+// dotted query parameter names (startDate.year, startDate.month, startDate.day).
+// Passing a flat "startDate=YYYY-MM-DD" query parameter fails with
+// "'startDate' is a message type. Parameters can only be bound to primitive types."
+const DATE_FIELD_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+
+function parseDateField(key: string, value: string): { year: number; month: number; day: number } {
+  if (!DATE_FIELD_PATTERN.test(value)) {
+    throw new Error(`${key} must be a YYYY-MM-DD date, got "${value}".`);
+  }
+  const [year, month, day] = value.split("-").map(Number);
+  return { year, month, day };
+}
+
+// Recursively appends a value to the query string, expanding plain objects into
+// dotted nested-field parameter names and arrays into repeated parameters — the
+// serialization Google's REST APIs expect for message-typed report fields.
+function appendParam(params: URLSearchParams, key: string, value: unknown): void {
+  if (value === undefined || value === null) return;
+  if (Array.isArray(value)) {
+    for (const item of value) appendParam(params, key, item);
+    return;
+  }
+  if (typeof value === "object") {
+    for (const [subKey, subValue] of Object.entries(value as Record<string, unknown>)) {
+      appendParam(params, `${key}.${subKey}`, subValue);
+    }
+    return;
+  }
+  params.append(key, String(value));
+}
+
 export class AdSenseClient {
   private token?: string;
   private tokenExpiresAt = 0;
@@ -42,10 +76,11 @@ export class AdSenseClient {
     const params = new URLSearchParams();
     for (const [key, value] of Object.entries(input)) {
       if (key === "account" || value === undefined) continue;
-      const values = Array.isArray(value) ? value : [value];
-      for (const item of values) {
-        if (item !== undefined && item !== null) params.append(key, String(item));
+      if ((key === "startDate" || key === "endDate") && typeof value === "string") {
+        appendParam(params, key, parseDateField(key, value));
+        continue;
       }
+      appendParam(params, key, value);
     }
     const query = params.toString();
     return this.request(`/${account}/reports:generate${query ? `?${query}` : ""}`);

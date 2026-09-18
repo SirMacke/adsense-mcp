@@ -14,6 +14,34 @@ test("generates a report using the configured account and repeated query paramet
   assert.match(requested, /dimensions=DATE/);
 });
 
+test("expands a CUSTOM date range into the nested startDate/endDate query parameters the API expects", async () => {
+  let requested = "";
+  const client = new AdSenseClient({ accessToken: "token", account: "accounts/pub-1" }, async (url) => {
+    requested = String(url);
+    return new Response(JSON.stringify({ rows: [] }), { status: 200 });
+  });
+  await client.generateReport({
+    metrics: ["CLICKS"],
+    dateRange: "CUSTOM",
+    startDate: "2024-01-01",
+    endDate: "2024-01-31",
+  });
+  // startDate/endDate are message-typed (Date) fields in the AdSense API, so
+  // they must be sent as dotted nested parameters, not flat startDate=YYYY-MM-DD.
+  assert.match(requested, /startDate\.year=2024&startDate\.month=1&startDate\.day=1/);
+  assert.match(requested, /endDate\.year=2024&endDate\.month=1&endDate\.day=31/);
+  assert.doesNotMatch(requested, /[?&]startDate=2024-01-01/);
+  assert.doesNotMatch(requested, /[?&]endDate=2024-01-31/);
+});
+
+test("rejects a malformed custom start or end date instead of silently sending a bad value", async () => {
+  const client = new AdSenseClient({ accessToken: "token", account: "accounts/pub-1" }, async () => new Response(JSON.stringify({}), { status: 200 }));
+  await assert.rejects(
+    client.generateReport({ metrics: ["CLICKS"], dateRange: "CUSTOM", startDate: "01/01/2024", endDate: "2024-01-31" }),
+    /startDate must be a YYYY-MM-DD date/
+  );
+});
+
 test("discovers an account and exchanges a refresh token when no access token exists", async () => {
   const urls: string[] = [];
   const client = new AdSenseClient({ clientId: "id", clientSecret: "secret", refreshToken: "refresh" }, async (url) => {
