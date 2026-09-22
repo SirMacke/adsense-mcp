@@ -1,6 +1,6 @@
 # AdSense MCP
 
-An MCP server that extracts ad-hoc data from the [AdSense Management API v2](https://developers.google.com/adsense/management/reference/rest/v2/accounts.reports/generate). It exposes an unrestricted report interface: any supported AdSense dimensions, metrics, filters, time period, sort order, timezone, language, currency, and limit can be passed through to `accounts.reports.generate`.
+An MCP server that reads payment information and extracts ad-hoc data from the [AdSense Management API v2](https://developers.google.com/adsense/management/reference/rest/v2/). It exposes an unrestricted report interface: any supported AdSense dimensions, metrics, filters, time period, sort order, timezone, language, currency, and limit can be passed through to `accounts.reports.generate`.
 
 The server uses the read-only `https://www.googleapis.com/auth/adsense.readonly` OAuth scope. It does not write to an AdSense account.
 
@@ -64,7 +64,10 @@ Add the equivalent server definition to your Codex MCP configuration, using the 
 
 - `adsense_list_accounts`
 - `adsense_get_account`
+- `adsense_list_payments`
 - `adsense_generate_report`
+
+`adsense_list_payments` returns the account's paid and unpaid earnings, including each payment's formatted amount and, for paid earnings, the credited date. It does not expose bank or payment-method details.
 
 Example report request: `metrics: ["ESTIMATED_EARNINGS", "PAGE_VIEWS", "CLICKS"]`, `dimensions: ["DATE", "COUNTRY_NAME"]`, `dateRange: "LAST_7_DAYS"`, `orderBy: ["-ESTIMATED_EARNINGS"]`.
 
@@ -75,7 +78,7 @@ npm test
 npm run build
 ```
 
-Live verification also requires the OAuth values above and an AdSense account. The API’s report endpoint is `GET /v2/{account}/reports:generate`; it requires the AdSense or AdSense read-only OAuth scope.
+Live verification also requires the OAuth values above and an AdSense account. The payment and report endpoints are `GET /v2/{account}/payments` and `GET /v2/{account}/reports:generate`; both accept the AdSense read-only OAuth scope.
 
 ## Releasing
 

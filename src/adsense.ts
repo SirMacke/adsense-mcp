@@ -71,6 +71,11 @@ export class AdSenseClient {
     return this.request(`/${account}`);
   }
 
+  async listPayments(account?: string) {
+    const resolvedAccount = account ?? (await this.defaultAccount());
+    return this.request(`/${resolvedAccount}/payments`);
+  }
+
   async generateReport(input: Record<string, unknown>) {
     const account = String(input.account ?? (await this.defaultAccount()));
     const params = new URLSearchParams();

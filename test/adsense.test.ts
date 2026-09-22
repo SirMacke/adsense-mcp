@@ -42,6 +42,32 @@ test("rejects a malformed custom start or end date instead of silently sending a
   );
 });
 
+test("lists payments using an explicit account", async () => {
+  let requested = "";
+  const client = new AdSenseClient({ accessToken: "token" }, async (url) => {
+    requested = String(url);
+    return new Response(JSON.stringify({ payments: [] }), { status: 200 });
+  });
+  const result = await client.listPayments("accounts/pub-1");
+  assert.equal(requested, "https://adsense.googleapis.com/v2/accounts/pub-1/payments");
+  assert.deepEqual(result, { payments: [] });
+});
+
+test("discovers an account when listing payments without one", async () => {
+  const urls: string[] = [];
+  const client = new AdSenseClient({ accessToken: "token" }, async (url) => {
+    urls.push(String(url));
+    if (String(url).endsWith("/accounts")) return new Response(JSON.stringify({ accounts: [{ name: "accounts/pub-2" }] }), { status: 200 });
+    return new Response(JSON.stringify({ payments: [{ name: "accounts/pub-2/payments/unpaid", amount: "$12.34" }] }), { status: 200 });
+  });
+  const result = await client.listPayments();
+  assert.deepEqual(urls, [
+    "https://adsense.googleapis.com/v2/accounts",
+    "https://adsense.googleapis.com/v2/accounts/pub-2/payments",
+  ]);
+  assert.deepEqual(result, { payments: [{ name: "accounts/pub-2/payments/unpaid", amount: "$12.34" }] });
+});
+
 test("discovers an account and exchanges a refresh token when no access token exists", async () => {
   const urls: string[] = [];
   const client = new AdSenseClient({ clientId: "id", clientSecret: "secret", refreshToken: "refresh" }, async (url) => {

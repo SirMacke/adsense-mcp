@@ -24,6 +24,10 @@ server.tool("adsense_get_account", "Get one AdSense account by resource name, e.
   account: z.string().regex(/^accounts\//),
 }, readOnlyToolAnnotations, async ({ account }) => response(await client.getAccount(account)));
 
+server.tool("adsense_list_payments", "List paid and unpaid earnings for an AdSense account. Account is discovered automatically when omitted.", {
+  account: z.string().regex(/^accounts\//).optional().describe("Account resource name; optional when one account is accessible."),
+}, readOnlyToolAnnotations, async ({ account }) => response(await client.listPayments(account)));
+
 server.tool("adsense_generate_report", "Extract any ad-hoc AdSense report. Supply API v2 dimensions, metrics, filters, dates, sorting, and other report parameters. Account is discovered automatically when omitted.", {
   account: z.string().regex(/^accounts\//).optional().describe("Account resource name; optional when one account is accessible."),
   dimensions: z.array(z.string()).optional().describe("Report dimensions, e.g. DATE, AD_UNIT_NAME, COUNTRY_NAME."),

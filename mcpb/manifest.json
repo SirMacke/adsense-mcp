@@ -3,7 +3,7 @@
   "name": "adsense-mcp",
   "display_name": "Google AdSense",
   "version": "0.1.4",
-  "description": "Extract any AdSense Management API v2 report through MCP.",
+  "description": "Read AdSense payments and extract any AdSense Management API v2 report through MCP.",
   "author": { "name": "SirMacke" },
   "server": {
     "type": "binary",
@@ -30,6 +30,7 @@
   "tools": [
     { "name": "adsense_list_accounts", "description": "List accessible AdSense accounts." },
     { "name": "adsense_get_account", "description": "Get an AdSense account." },
+    { "name": "adsense_list_payments", "description": "List paid and unpaid AdSense earnings." },
     { "name": "adsense_generate_report", "description": "Extract an arbitrary AdSense Management API v2 report." }
   ],
   "keywords": ["adsense", "google", "analytics", "reporting"],
