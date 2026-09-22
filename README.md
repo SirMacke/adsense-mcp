@@ -65,6 +65,13 @@ Add the equivalent server definition to your Codex MCP configuration, using the 
 - `adsense_list_accounts`
 - `adsense_get_account`
 - `adsense_list_payments`
+- `adsense_list_child_accounts`
+- `adsense_get_ad_blocking_recovery_tag`
+- `adsense_list_alerts`
+- `adsense_list_policy_issues`
+- `adsense_get_policy_issue`
+- `adsense_list_sites`
+- `adsense_get_site`
 - `adsense_generate_report`
 
 `adsense_list_payments` returns the account's paid and unpaid earnings, including each payment's formatted amount and, for paid earnings, the credited date. It does not expose bank or payment-method details.

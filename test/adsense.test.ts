@@ -68,6 +68,34 @@ test("discovers an account when listing payments without one", async () => {
   assert.deepEqual(result, { payments: [{ name: "accounts/pub-2/payments/unpaid", amount: "$12.34" }] });
 });
 
+test("uses the documented account health and site routes", async () => {
+  const urls: string[] = [];
+  const client = new AdSenseClient({ accessToken: "token" }, async (url) => {
+    urls.push(String(url));
+    return new Response(JSON.stringify({}), { status: 200 });
+  });
+
+  await client.listAccounts({ pageSize: 25, pageToken: "next page" });
+  await client.listChildAccounts({ account: "accounts/pub-1", pageSize: 10 });
+  await client.getAdBlockingRecoveryTag("accounts/pub-1");
+  await client.listAlerts({ account: "accounts/pub-1", languageCode: "sv-SE" });
+  await client.listPolicyIssues({ account: "accounts/pub-1", pageToken: "policy-next" });
+  await client.getPolicyIssue("accounts/pub-1/policyIssues/issue-1");
+  await client.listSites({ account: "accounts/pub-1", pageSize: 50 });
+  await client.getSite("accounts/pub-1/sites/site-1");
+
+  assert.deepEqual(urls, [
+    "https://adsense.googleapis.com/v2/accounts?pageSize=25&pageToken=next+page",
+    "https://adsense.googleapis.com/v2/accounts/pub-1:listChildAccounts?pageSize=10",
+    "https://adsense.googleapis.com/v2/accounts/pub-1/adBlockingRecoveryTag",
+    "https://adsense.googleapis.com/v2/accounts/pub-1/alerts?languageCode=sv-SE",
+    "https://adsense.googleapis.com/v2/accounts/pub-1/policyIssues?pageToken=policy-next",
+    "https://adsense.googleapis.com/v2/accounts/pub-1/policyIssues/issue-1",
+    "https://adsense.googleapis.com/v2/accounts/pub-1/sites?pageSize=50",
+    "https://adsense.googleapis.com/v2/accounts/pub-1/sites/site-1",
+  ]);
+});
+
 test("discovers an account and exchanges a refresh token when no access token exists", async () => {
   const urls: string[] = [];
   const client = new AdSenseClient({ clientId: "id", clientSecret: "secret", refreshToken: "refresh" }, async (url) => {

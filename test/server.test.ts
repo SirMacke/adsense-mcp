@@ -27,7 +27,19 @@ test("serves the AdSense tools over the MCP stdio protocol", async () => {
     assert.equal(initialized.result.serverInfo.name, "adsense-mcp");
     child.stdin.write(`${JSON.stringify({ jsonrpc: "2.0", method: "notifications/initialized" })}\n`);
     const listed = await send(2, "tools/list", {});
-    assert.deepEqual(listed.result.tools.map((tool: { name: string }) => tool.name), ["adsense_list_accounts", "adsense_get_account", "adsense_list_payments", "adsense_generate_report"]);
+    assert.deepEqual(listed.result.tools.map((tool: { name: string }) => tool.name), [
+      "adsense_list_accounts",
+      "adsense_get_account",
+      "adsense_list_payments",
+      "adsense_list_child_accounts",
+      "adsense_get_ad_blocking_recovery_tag",
+      "adsense_list_alerts",
+      "adsense_list_policy_issues",
+      "adsense_get_policy_issue",
+      "adsense_list_sites",
+      "adsense_get_site",
+      "adsense_generate_report",
+    ]);
     for (const tool of listed.result.tools) {
       assert.deepEqual(tool.annotations, {
         readOnlyHint: true,

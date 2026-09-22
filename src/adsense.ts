@@ -11,6 +11,15 @@ export interface AdSenseConfig {
   account?: string;
 }
 
+interface PageParams {
+  pageSize?: number;
+  pageToken?: string;
+}
+
+interface AccountPageParams extends PageParams {
+  account?: string;
+}
+
 export function configFromEnv(env = process.env): AdSenseConfig {
   return {
     accessToken: env.ADSENSE_ACCESS_TOKEN,
@@ -55,6 +64,13 @@ function appendParam(params: URLSearchParams, key: string, value: unknown): void
   params.append(key, String(value));
 }
 
+function withQuery(path: string, input: object): string {
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(input)) appendParam(params, key, value);
+  const query = params.toString();
+  return `${path}${query ? `?${query}` : ""}`;
+}
+
 export class AdSenseClient {
   private token?: string;
   private tokenExpiresAt = 0;
@@ -63,8 +79,8 @@ export class AdSenseClient {
     if (this.token) this.tokenExpiresAt = Infinity; // caller-supplied token: no refresh_token to renew it with
   }
 
-  async listAccounts() {
-    return this.request("/accounts");
+  async listAccounts(input: PageParams = {}) {
+    return this.request(withQuery("/accounts", input));
   }
 
   async getAccount(account: string) {
@@ -74,6 +90,43 @@ export class AdSenseClient {
   async listPayments(account?: string) {
     const resolvedAccount = account ?? (await this.defaultAccount());
     return this.request(`/${resolvedAccount}/payments`);
+  }
+
+  async listChildAccounts(input: AccountPageParams = {}) {
+    const { account, ...params } = input;
+    const resolvedAccount = account ?? (await this.defaultAccount());
+    return this.request(withQuery(`/${resolvedAccount}:listChildAccounts`, params));
+  }
+
+  async getAdBlockingRecoveryTag(account?: string) {
+    const resolvedAccount = account ?? (await this.defaultAccount());
+    return this.request(`/${resolvedAccount}/adBlockingRecoveryTag`);
+  }
+
+  async listAlerts(input: { account?: string; languageCode?: string } = {}) {
+    const { account, ...params } = input;
+    const resolvedAccount = account ?? (await this.defaultAccount());
+    return this.request(withQuery(`/${resolvedAccount}/alerts`, params));
+  }
+
+  async listPolicyIssues(input: AccountPageParams = {}) {
+    const { account, ...params } = input;
+    const resolvedAccount = account ?? (await this.defaultAccount());
+    return this.request(withQuery(`/${resolvedAccount}/policyIssues`, params));
+  }
+
+  async getPolicyIssue(name: string) {
+    return this.request(`/${name}`);
+  }
+
+  async listSites(input: AccountPageParams = {}) {
+    const { account, ...params } = input;
+    const resolvedAccount = account ?? (await this.defaultAccount());
+    return this.request(withQuery(`/${resolvedAccount}/sites`, params));
+  }
+
+  async getSite(name: string) {
+    return this.request(`/${name}`);
   }
 
   async generateReport(input: Record<string, unknown>) {
