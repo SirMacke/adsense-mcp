@@ -71,6 +71,20 @@ function withQuery(path: string, input: object): string {
   return `${path}${query ? `?${query}` : ""}`;
 }
 
+function withReportQuery(path: string, input: Record<string, unknown>): string {
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(input)) {
+    if (value === undefined) continue;
+    if ((key === "startDate" || key === "endDate") && typeof value === "string") {
+      appendParam(params, key, parseDateField(key, value));
+      continue;
+    }
+    appendParam(params, key, value);
+  }
+  const query = params.toString();
+  return `${path}${query ? `?${query}` : ""}`;
+}
+
 export class AdSenseClient {
   private token?: string;
   private tokenExpiresAt = 0;
@@ -184,19 +198,25 @@ export class AdSenseClient {
     return this.request(withQuery(`/${customChannel}:listLinkedAdUnits`, params));
   }
 
+  async listSavedReports(input: AccountPageParams = {}) {
+    const { account, ...params } = input;
+    const resolvedAccount = account ?? (await this.defaultAccount());
+    return this.request(withQuery(`/${resolvedAccount}/reports/saved`, params));
+  }
+
+  async getSavedReport(name: string) {
+    return this.request(`/${name}/saved`);
+  }
+
+  async generateSavedReport(input: Record<string, unknown>) {
+    const { name, ...params } = input;
+    return this.request(withReportQuery(`/${String(name)}/saved:generate`, params));
+  }
+
   async generateReport(input: Record<string, unknown>) {
     const account = String(input.account ?? (await this.defaultAccount()));
-    const params = new URLSearchParams();
-    for (const [key, value] of Object.entries(input)) {
-      if (key === "account" || value === undefined) continue;
-      if ((key === "startDate" || key === "endDate") && typeof value === "string") {
-        appendParam(params, key, parseDateField(key, value));
-        continue;
-      }
-      appendParam(params, key, value);
-    }
-    const query = params.toString();
-    return this.request(`/${account}/reports:generate${query ? `?${query}` : ""}`);
+    const { account: _account, ...params } = input;
+    return this.request(withReportQuery(`/${account}/reports:generate`, params));
   }
 
   private async defaultAccount(): Promise<string> {

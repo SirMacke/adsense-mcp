@@ -136,6 +136,31 @@ test("uses the documented inventory routes", async () => {
   ]);
 });
 
+test("lists, gets, and generates saved reports", async () => {
+  const urls: string[] = [];
+  const client = new AdSenseClient({ accessToken: "token" }, async (url) => {
+    urls.push(String(url));
+    return new Response(JSON.stringify({}), { status: 200 });
+  });
+  const report = "accounts/pub-1/reports/report-1";
+
+  await client.listSavedReports({ account: "accounts/pub-1", pageSize: 15 });
+  await client.getSavedReport(report);
+  await client.generateSavedReport({
+    name: report,
+    dateRange: "CUSTOM",
+    startDate: "2024-02-01",
+    endDate: "2024-02-29",
+    currencyCode: "SEK",
+  });
+
+  assert.deepEqual(urls, [
+    "https://adsense.googleapis.com/v2/accounts/pub-1/reports/saved?pageSize=15",
+    "https://adsense.googleapis.com/v2/accounts/pub-1/reports/report-1/saved",
+    "https://adsense.googleapis.com/v2/accounts/pub-1/reports/report-1/saved:generate?dateRange=CUSTOM&startDate.year=2024&startDate.month=2&startDate.day=1&endDate.year=2024&endDate.month=2&endDate.day=29&currencyCode=SEK",
+  ]);
+});
+
 test("discovers an account and exchanges a refresh token when no access token exists", async () => {
   const urls: string[] = [];
   const client = new AdSenseClient({ clientId: "id", clientSecret: "secret", refreshToken: "refresh" }, async (url) => {

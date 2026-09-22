@@ -84,6 +84,9 @@ Add the equivalent server definition to your Codex MCP configuration, using the 
 - `adsense_list_custom_channels`
 - `adsense_get_custom_channel`
 - `adsense_list_linked_ad_units`
+- `adsense_list_saved_reports`
+- `adsense_get_saved_report`
+- `adsense_generate_saved_report`
 - `adsense_generate_report`
 
 `adsense_list_payments` returns the account's paid and unpaid earnings, including each payment's formatted amount and, for paid earnings, the credited date. It does not expose bank or payment-method details.

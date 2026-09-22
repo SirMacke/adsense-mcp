@@ -50,6 +50,9 @@
     { "name": "adsense_list_custom_channels", "description": "List AdSense custom channels." },
     { "name": "adsense_get_custom_channel", "description": "Get an AdSense custom channel." },
     { "name": "adsense_list_linked_ad_units", "description": "List ad units linked to a custom channel." },
+    { "name": "adsense_list_saved_reports", "description": "List saved AdSense reports." },
+    { "name": "adsense_get_saved_report", "description": "Get a saved AdSense report." },
+    { "name": "adsense_generate_saved_report", "description": "Generate a saved AdSense report." },
     { "name": "adsense_generate_report", "description": "Extract an arbitrary AdSense Management API v2 report." }
   ],
   "keywords": ["adsense", "google", "analytics", "reporting"],

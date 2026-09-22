@@ -50,6 +50,9 @@ test("serves the AdSense tools over the MCP stdio protocol", async () => {
       "adsense_list_custom_channels",
       "adsense_get_custom_channel",
       "adsense_list_linked_ad_units",
+      "adsense_list_saved_reports",
+      "adsense_get_saved_report",
+      "adsense_generate_saved_report",
       "adsense_generate_report",
     ]);
     for (const tool of listed.result.tools) {
