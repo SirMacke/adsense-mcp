@@ -1,6 +1,6 @@
 # AdSense MCP
 
-An MCP server that reads payment information and extracts ad-hoc data from the [AdSense Management API v2](https://developers.google.com/adsense/management/reference/rest/v2/). It exposes an unrestricted report interface: any supported AdSense dimensions, metrics, filters, time period, sort order, timezone, language, currency, and limit can be passed through to `accounts.reports.generate`.
+An MCP server providing read-only access to the [AdSense Management API v2](https://developers.google.com/adsense/management/reference/rest/v2/): accounts, payments, alerts, policy issues, sites, inventory, ad code, and saved or ad-hoc reports.
 
 The server uses the read-only `https://www.googleapis.com/auth/adsense.readonly` OAuth scope. It does not write to an AdSense account.
 
@@ -62,16 +62,21 @@ Add the equivalent server definition to your Codex MCP configuration, using the 
 
 ## Tools
 
+### Accounts and account status
+
 - `adsense_list_accounts`
 - `adsense_get_account`
-- `adsense_list_payments`
 - `adsense_list_child_accounts`
-- `adsense_get_ad_blocking_recovery_tag`
+- `adsense_list_payments`
 - `adsense_list_alerts`
+- `adsense_get_ad_blocking_recovery_tag`
 - `adsense_list_policy_issues`
 - `adsense_get_policy_issue`
 - `adsense_list_sites`
 - `adsense_get_site`
+
+### Inventory
+
 - `adsense_list_ad_clients`
 - `adsense_get_ad_client`
 - `adsense_get_ad_client_ad_code`
@@ -84,14 +89,21 @@ Add the equivalent server definition to your Codex MCP configuration, using the 
 - `adsense_list_custom_channels`
 - `adsense_get_custom_channel`
 - `adsense_list_linked_ad_units`
+
+### Reports
+
 - `adsense_list_saved_reports`
 - `adsense_get_saved_report`
 - `adsense_generate_saved_report`
 - `adsense_generate_report`
 
-`adsense_list_payments` returns the account's paid and unpaid earnings, including each payment's formatted amount and, for paid earnings, the credited date. It does not expose bank or payment-method details.
+Account-level tools discover the configured or first accessible account when `account` is omitted. Paginated list tools accept `pageSize` and `pageToken`; pass a returned `nextPageToken` to continue. Resource-specific tools accept the canonical names returned by their corresponding list tools.
+
+`adsense_list_payments` returns paid and unpaid earnings, including the formatted amount and, for paid earnings, the credited date. The AdSense API does not expose bank or payment-method details.
 
 Example report request: `metrics: ["ESTIMATED_EARNINGS", "PAGE_VIEWS", "CLICKS"]`, `dimensions: ["DATE", "COUNTRY_NAME"]`, `dateRange: "LAST_7_DAYS"`, `orderBy: ["-ESTIMATED_EARNINGS"]`.
+
+The server returns structured JSON. The API's duplicate CSV report methods are intentionally omitted because agents can transform the structured response when CSV is needed.
 
 ## Verify
 
@@ -100,7 +112,7 @@ npm test
 npm run build
 ```
 
-Live verification also requires the OAuth values above and an AdSense account. The payment and report endpoints are `GET /v2/{account}/payments` and `GET /v2/{account}/reports:generate`; both accept the AdSense read-only OAuth scope.
+Live verification also requires the OAuth values above and an AdSense account. Every exposed endpoint accepts the AdSense read-only OAuth scope.
 
 ## Releasing
 

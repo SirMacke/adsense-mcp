@@ -3,7 +3,7 @@
   "name": "adsense-mcp",
   "display_name": "Google AdSense",
   "version": "0.1.4",
-  "description": "Read AdSense payments and extract any AdSense Management API v2 report through MCP.",
+  "description": "Read AdSense accounts, inventory, payments, policy, and reports through MCP.",
   "author": { "name": "SirMacke" },
   "server": {
     "type": "binary",

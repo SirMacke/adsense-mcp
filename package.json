@@ -2,7 +2,7 @@
   "name": "@sirmacke/adsense-mcp",
   "version": "0.1.4",
   "license": "MIT",
-  "description": "MCP server for reading AdSense Management API v2 payments and report data",
+  "description": "Read-only MCP server for AdSense accounts, inventory, payments, policy, and reports",
   "mcpName": "io.github.SirMacke/adsense-mcp",
   "type": "module",
   "main": "dist/index.js",
