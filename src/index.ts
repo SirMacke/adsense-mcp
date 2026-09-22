@@ -5,7 +5,7 @@ import { z } from "zod";
 import { AdSenseClient, configFromEnv } from "./adsense.js";
 
 const client = new AdSenseClient(configFromEnv());
-const server = new McpServer({ name: "adsense-mcp", version: "0.1.4" });
+const server = new McpServer({ name: "adsense-mcp", version: "0.2.0" });
 
 const readOnlyToolAnnotations = {
   readOnlyHint: true,

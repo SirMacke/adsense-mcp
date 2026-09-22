@@ -7,12 +7,12 @@
     "url": "https://github.com/SirMacke/adsense-mcp",
     "source": "github"
   },
-  "version": "0.1.4",
+  "version": "0.2.0",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@sirmacke/adsense-mcp",
-      "version": "0.1.4",
+      "version": "0.2.0",
       "transport": { "type": "stdio" },
       "environmentVariables": [
         { "name": "ADSENSE_ACCESS_TOKEN", "description": "Optional short-lived OAuth access token.", "isRequired": false, "isSecret": true, "format": "string" },

@@ -1,6 +1,6 @@
 {
   "name": "@sirmacke/adsense-mcp",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "license": "MIT",
   "description": "Read-only MCP server for AdSense accounts, inventory, payments, policy, and reports",
   "mcpName": "io.github.SirMacke/adsense-mcp",

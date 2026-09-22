@@ -2,7 +2,7 @@
   "manifest_version": "0.3",
   "name": "adsense-mcp",
   "display_name": "Google AdSense",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "Read AdSense accounts, inventory, payments, policy, and reports through MCP.",
   "author": { "name": "SirMacke" },
   "server": {
