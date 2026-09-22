@@ -129,6 +129,61 @@ export class AdSenseClient {
     return this.request(`/${name}`);
   }
 
+  async listAdClients(input: AccountPageParams = {}) {
+    const { account, ...params } = input;
+    const resolvedAccount = account ?? (await this.defaultAccount());
+    return this.request(withQuery(`/${resolvedAccount}/adclients`, params));
+  }
+
+  async getAdClient(name: string) {
+    return this.request(`/${name}`);
+  }
+
+  async getAdClientAdCode(name: string) {
+    return this.request(`/${name}/adcode`);
+  }
+
+  async listAdUnits(input: PageParams & { adClient: string }) {
+    const { adClient, ...params } = input;
+    return this.request(withQuery(`/${adClient}/adunits`, params));
+  }
+
+  async getAdUnit(name: string) {
+    return this.request(`/${name}`);
+  }
+
+  async getAdUnitAdCode(name: string) {
+    return this.request(`/${name}/adcode`);
+  }
+
+  async listLinkedCustomChannels(input: PageParams & { adUnit: string }) {
+    const { adUnit, ...params } = input;
+    return this.request(withQuery(`/${adUnit}:listLinkedCustomChannels`, params));
+  }
+
+  async listUrlChannels(input: PageParams & { adClient: string }) {
+    const { adClient, ...params } = input;
+    return this.request(withQuery(`/${adClient}/urlchannels`, params));
+  }
+
+  async getUrlChannel(name: string) {
+    return this.request(`/${name}`);
+  }
+
+  async listCustomChannels(input: PageParams & { adClient: string }) {
+    const { adClient, ...params } = input;
+    return this.request(withQuery(`/${adClient}/customchannels`, params));
+  }
+
+  async getCustomChannel(name: string) {
+    return this.request(`/${name}`);
+  }
+
+  async listLinkedAdUnits(input: PageParams & { customChannel: string }) {
+    const { customChannel, ...params } = input;
+    return this.request(withQuery(`/${customChannel}:listLinkedAdUnits`, params));
+  }
+
   async generateReport(input: Record<string, unknown>) {
     const account = String(input.account ?? (await this.defaultAccount()));
     const params = new URLSearchParams();

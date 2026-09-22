@@ -19,6 +19,10 @@ function response(data: unknown) {
 }
 
 const accountSchema = z.string().regex(/^accounts\/[^/]+$/);
+const adClientSchema = z.string().regex(/^accounts\/[^/]+\/adclients\/[^/]+$/);
+const adUnitSchema = z.string().regex(/^accounts\/[^/]+\/adclients\/[^/]+\/adunits\/[^/]+$/);
+const customChannelSchema = z.string().regex(/^accounts\/[^/]+\/adclients\/[^/]+\/customchannels\/[^/]+$/);
+const urlChannelSchema = z.string().regex(/^accounts\/[^/]+\/adclients\/[^/]+\/urlchannels\/[^/]+$/);
 const paginationSchema = {
   pageSize: z.number().int().min(1).max(10000).optional().describe("Maximum number of resources to return."),
   pageToken: z.string().min(1).optional().describe("Token from a previous response for the next page."),
@@ -65,6 +69,60 @@ server.tool("adsense_list_sites", "List sites in an AdSense account, including r
 server.tool("adsense_get_site", "Get one AdSense site by resource name.", {
   name: z.string().regex(/^accounts\/[^/]+\/sites\/[^/]+$/),
 }, readOnlyToolAnnotations, async ({ name }) => response(await client.getSite(name)));
+
+server.tool("adsense_list_ad_clients", "List ad clients in an AdSense account.", {
+  account: accountSchema.optional().describe("Account resource name; discovered automatically when omitted."),
+  ...paginationSchema,
+}, readOnlyToolAnnotations, async (args) => response(await client.listAdClients(args)));
+
+server.tool("adsense_get_ad_client", "Get one AdSense ad client by resource name.", {
+  name: adClientSchema,
+}, readOnlyToolAnnotations, async ({ name }) => response(await client.getAdClient(name)));
+
+server.tool("adsense_get_ad_client_ad_code", "Get the ad code for an AdSense ad client.", {
+  name: adClientSchema,
+}, readOnlyToolAnnotations, async ({ name }) => response(await client.getAdClientAdCode(name)));
+
+server.tool("adsense_list_ad_units", "List ad units under an AdSense ad client.", {
+  adClient: adClientSchema.describe("Parent ad client resource name."),
+  ...paginationSchema,
+}, readOnlyToolAnnotations, async (args) => response(await client.listAdUnits(args)));
+
+server.tool("adsense_get_ad_unit", "Get one AdSense ad unit by resource name.", {
+  name: adUnitSchema,
+}, readOnlyToolAnnotations, async ({ name }) => response(await client.getAdUnit(name)));
+
+server.tool("adsense_get_ad_unit_ad_code", "Get the ad code for an AdSense ad unit.", {
+  name: adUnitSchema,
+}, readOnlyToolAnnotations, async ({ name }) => response(await client.getAdUnitAdCode(name)));
+
+server.tool("adsense_list_linked_custom_channels", "List custom channels linked to an AdSense ad unit.", {
+  adUnit: adUnitSchema.describe("Parent ad unit resource name."),
+  ...paginationSchema,
+}, readOnlyToolAnnotations, async (args) => response(await client.listLinkedCustomChannels(args)));
+
+server.tool("adsense_list_url_channels", "List active URL channels under an AdSense ad client.", {
+  adClient: adClientSchema.describe("Parent ad client resource name."),
+  ...paginationSchema,
+}, readOnlyToolAnnotations, async (args) => response(await client.listUrlChannels(args)));
+
+server.tool("adsense_get_url_channel", "Get one AdSense URL channel by resource name.", {
+  name: urlChannelSchema,
+}, readOnlyToolAnnotations, async ({ name }) => response(await client.getUrlChannel(name)));
+
+server.tool("adsense_list_custom_channels", "List custom channels under an AdSense ad client.", {
+  adClient: adClientSchema.describe("Parent ad client resource name."),
+  ...paginationSchema,
+}, readOnlyToolAnnotations, async (args) => response(await client.listCustomChannels(args)));
+
+server.tool("adsense_get_custom_channel", "Get one AdSense custom channel by resource name.", {
+  name: customChannelSchema,
+}, readOnlyToolAnnotations, async ({ name }) => response(await client.getCustomChannel(name)));
+
+server.tool("adsense_list_linked_ad_units", "List ad units linked to an AdSense custom channel.", {
+  customChannel: customChannelSchema.describe("Parent custom channel resource name."),
+  ...paginationSchema,
+}, readOnlyToolAnnotations, async (args) => response(await client.listLinkedAdUnits(args)));
 
 server.tool("adsense_generate_report", "Extract any ad-hoc AdSense report. Supply API v2 dimensions, metrics, filters, dates, sorting, and other report parameters. Account is discovered automatically when omitted.", {
   account: accountSchema.optional().describe("Account resource name; optional when one account is accessible."),

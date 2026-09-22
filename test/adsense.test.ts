@@ -96,6 +96,46 @@ test("uses the documented account health and site routes", async () => {
   ]);
 });
 
+test("uses the documented inventory routes", async () => {
+  const urls: string[] = [];
+  const client = new AdSenseClient({ accessToken: "token" }, async (url) => {
+    urls.push(String(url));
+    return new Response(JSON.stringify({}), { status: 200 });
+  });
+  const adClient = "accounts/pub-1/adclients/ca-pub-1";
+  const adUnit = `${adClient}/adunits/unit-1`;
+  const customChannel = `${adClient}/customchannels/custom-1`;
+  const urlChannel = `${adClient}/urlchannels/url-1`;
+
+  await client.listAdClients({ account: "accounts/pub-1", pageSize: 20 });
+  await client.getAdClient(adClient);
+  await client.getAdClientAdCode(adClient);
+  await client.listAdUnits({ adClient, pageToken: "units-next" });
+  await client.getAdUnit(adUnit);
+  await client.getAdUnitAdCode(adUnit);
+  await client.listLinkedCustomChannels({ adUnit, pageSize: 30 });
+  await client.listUrlChannels({ adClient, pageSize: 40 });
+  await client.getUrlChannel(urlChannel);
+  await client.listCustomChannels({ adClient, pageToken: "channels-next" });
+  await client.getCustomChannel(customChannel);
+  await client.listLinkedAdUnits({ customChannel, pageSize: 50 });
+
+  assert.deepEqual(urls, [
+    "https://adsense.googleapis.com/v2/accounts/pub-1/adclients?pageSize=20",
+    "https://adsense.googleapis.com/v2/accounts/pub-1/adclients/ca-pub-1",
+    "https://adsense.googleapis.com/v2/accounts/pub-1/adclients/ca-pub-1/adcode",
+    "https://adsense.googleapis.com/v2/accounts/pub-1/adclients/ca-pub-1/adunits?pageToken=units-next",
+    "https://adsense.googleapis.com/v2/accounts/pub-1/adclients/ca-pub-1/adunits/unit-1",
+    "https://adsense.googleapis.com/v2/accounts/pub-1/adclients/ca-pub-1/adunits/unit-1/adcode",
+    "https://adsense.googleapis.com/v2/accounts/pub-1/adclients/ca-pub-1/adunits/unit-1:listLinkedCustomChannels?pageSize=30",
+    "https://adsense.googleapis.com/v2/accounts/pub-1/adclients/ca-pub-1/urlchannels?pageSize=40",
+    "https://adsense.googleapis.com/v2/accounts/pub-1/adclients/ca-pub-1/urlchannels/url-1",
+    "https://adsense.googleapis.com/v2/accounts/pub-1/adclients/ca-pub-1/customchannels?pageToken=channels-next",
+    "https://adsense.googleapis.com/v2/accounts/pub-1/adclients/ca-pub-1/customchannels/custom-1",
+    "https://adsense.googleapis.com/v2/accounts/pub-1/adclients/ca-pub-1/customchannels/custom-1:listLinkedAdUnits?pageSize=50",
+  ]);
+});
+
 test("discovers an account and exchanges a refresh token when no access token exists", async () => {
   const urls: string[] = [];
   const client = new AdSenseClient({ clientId: "id", clientSecret: "secret", refreshToken: "refresh" }, async (url) => {
