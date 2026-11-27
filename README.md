@@ -6,6 +6,8 @@ The server uses the read-only `https://www.googleapis.com/auth/adsense.readonly`
 
 ## Install
 
+Requires Node.js 22 or newer.
+
 Once published, run it from an MCP client with `npx -y @sirmacke/adsense-mcp`. Configure either `ADSENSE_ACCESS_TOKEN`, or all three of `ADSENSE_CLIENT_ID`, `ADSENSE_CLIENT_SECRET`, and `ADSENSE_REFRESH_TOKEN`.
 
 ## Security
@@ -119,7 +121,7 @@ Live verification also requires the OAuth values above and an AdSense account. E
 Releases are published to both npm and the official MCP Registry. The registry stores discovery metadata from `server.json`; the installable server itself is distributed through npm.
 
 1. Update the version consistently in `package.json`, `package-lock.json`, `server.json` (including its npm package entry), `mcpb/manifest.json`, and the MCP server version in `src/index.ts`.
-2. Run `npm test` and `npm pack --dry-run` to verify the build and published package contents.
+2. Run `npm test` and `npm pack --dry-run` to verify the build and published package contents. `npm test` first runs `npm run check:version`, which fails if any of the locations in step 1 disagree with `package.json`.
 3. Commit and push the release to GitHub.
 4. Publish the public scoped package with `npm publish --access public`.
 5. Authenticate when necessary with `mcp-publisher login github`, then run `mcp-publisher publish` to publish the matching `server.json` version.

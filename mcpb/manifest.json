@@ -57,5 +57,5 @@
   ],
   "keywords": ["adsense", "google", "analytics", "reporting"],
   "license": "MIT",
-  "compatibility": { "platforms": ["win32", "darwin", "linux"], "runtimes": { "node": ">=20" } }
+  "compatibility": { "platforms": ["win32", "darwin", "linux"], "runtimes": { "node": ">=22" } }
 }
